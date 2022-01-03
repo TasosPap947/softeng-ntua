@@ -14,11 +14,11 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}.`);
 });
 
-endpointsPath = "./endpoints";
-adminEndpointsPath = `${endpointsPath}/admin`;
-operationalEndpointsPath = `${endpointsPath}/operational`;
+const endpointsPath = "./endpoints";
+const adminEndpointsPath = `${endpointsPath}/admin`;
+const operationalEndpointsPath = `${endpointsPath}/operational`;
 
-baseURL = `/interoperability/api`;
+const baseURL = `/interoperability/api`;
 
 /* admin endpoints */
 const healthcheck = require(`${adminEndpointsPath}/healthcheck.js`);
