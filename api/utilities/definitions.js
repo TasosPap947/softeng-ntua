@@ -1,8 +1,8 @@
 let conString = {
   host:"localhost",
-  user:"",
-  password:"",
-  database:"test"
+  user:"root",
+  password:"softeng17",
+  database:"db_tolls"
 };
 
 module.exports = { conString };
