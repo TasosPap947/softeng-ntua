@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("mysql");
 
-const fun = require("../../functions.js");
-const { conString } = require("../../definitions.js");
+const response = require("../../utilities/FormattedResponse.js");
+const { conString } = require("../../utilities/definitions.js");
 
 function resetpasses(req, res) {
 
@@ -17,12 +17,12 @@ function resetpasses(req, res) {
     if (err) {
       console.log(err);
       const data = {"status":"failed"};
-      fun.respond(res, 500, data, format);
+      response(res, 500, data, format);
     }
     else {
       console.log(result);
       const data = {"status":"OK"};
-      fun.respond(res, 200, data, format);
+      response(res, 200, data, format);
     }
   })
 }
