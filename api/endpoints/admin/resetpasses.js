@@ -11,20 +11,20 @@ function resetpasses(req, res) {
 
   const format = req.query.format;
 
-  const sql = 'DELETE FROM Passes';
+  const delete_query = 'DELETE FROM Passes';
 
-  con.query(sql, (err, result) => {
+  con.query(delete_query, (err, result) => {
     if (err) {
       console.log(err);
-      const data = {"status":"failed"};
+      const data = { "status": "failed", "message": err};
       response(res, 500, data, format);
     }
     else {
-      console.log(result);
-      const data = {"status":"OK"};
-      response(res, 200, data, format);
-    }
-  })
+    console.log(result);
+    const data = { "status": "OK" };
+    response(res, 200, data, format);
+  }
+})
 }
 
 router.post("/admin/resetpasses", resetpasses);
