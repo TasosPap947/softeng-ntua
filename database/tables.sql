@@ -13,9 +13,9 @@ create table Station (
 
 create table Vehicle (
   vehicleID varchar(12) not null,
-  licenseYear int(4),
-  tagID varchar(9),
-  tagProvider varchar(30),
+  licenseYear int(4) not null,
+  tagID varchar(9) not null,
+  tagProvider varchar(30) not null,
 
   primary key (vehicleID)
 );
@@ -38,3 +38,15 @@ create table Passes (
     on delete restrict
     on update cascade
 );
+
+#μετά το γέμισμα των υπόλοιπων πινάκων, που έγινε με το εργαλείο Wizard του MySQL Workbench
+SET GLOBAL local_infile=1;
+LOAD DATA LOCAL INFILE
+'~/Desktop/passes.csv'
+INTO TABLE Passes
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(passID, StationstationID, VehiclevehicleID, @a, charge)
+SET DateAndTime = str_to_date(@a, '%c/%e/%Y %k:%i');
