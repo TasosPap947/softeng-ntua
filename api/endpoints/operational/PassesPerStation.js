@@ -26,7 +26,7 @@ async function PassesPerStation(req, res) {
   v.vehicleID as VehicleID, v.tagProvider as TagProvider,
   CASE
     WHEN v.tagProvider = ?
-    THEN 'home' ELSE 'away'
+    THEN 'home' ELSE 'visitor'
   END as PassType
   FROM Passes p JOIN Vehicle v ON (p.VehiclevehicleID = v.vehicleID)
   WHERE p.StationstationID = ? AND p.DateAndTime BETWEEN ? AND ?
