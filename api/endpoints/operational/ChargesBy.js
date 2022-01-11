@@ -4,7 +4,7 @@ const mysql = require("mysql");
 const util = require("util");
 const moment = require('moment');
 
-const response = require("../../utilities/FormattedResponse.js");
+const response = require("../../utilities/responseFunctions.js");
 const { conString } = require("../../utilities/definitions.js");
 
 async function ChargesBy(req, res) {
@@ -18,16 +18,17 @@ async function ChargesBy(req, res) {
   //PassesList query
   const PPOListQuery = `
   SELECT
-	v.tagProvider as VisitingOperator,
+	v.ProviderAbbr as VisitingOperator,
     COUNT(p.passID) as NumberOfPasses,
     SUM(p.charge) as PassesCost
   FROM
     Passes p JOIN Vehicle v ON (p.VehiclevehicleID = v.vehicleID)
   WHERE
-    v.tagProvider != ? AND
-		? = (SELECT s.stationProvider FROM Station s WHERE p.StationstationID = s.stationID) AND
+    v.ProviderAbbr != ? AND
+		? = (SELECT SUBSTRING(s.stationProvider,1,2) FROM Station s WHERE p.StationstationID = s.stationID) AND
         DateAndTime BETWEEN ? AND ?
-        GROUP BY v.tagProvider
+        GROUP BY v.ProviderAbbr
+        ORDER BY v.ProviderAbbr
 		`;
 
   try {
@@ -41,19 +42,26 @@ async function ChargesBy(req, res) {
       op_ID,
       date_from,
       date_to
-    ]);
+    ]);  
 
     //if no result given send error message
-    if (!PPOListRes[0]) {
-      response(res, 402, {message: "No available data for specified " +
-      "provider and time period."});
+    if (!PPOListRes[0]) { 
+      response.general(res, 402, {
+      op_ID: op_ID,
+      RequestTimestamp: currentTimestamp,
+      PeriodFrom: date_from,
+      PeriodTo: date_to,
+      message: "No available data for specified provider and time period."
+    }, format);
+    conn.end();
+    return 0;
     }
 
     //Parse result as JS Object and compute total length
     const PPOList = JSON.parse(JSON.stringify(PPOListRes));
 
     //Send final response
-    response(res, 200, {
+    response.ChargesBy(res, 200, {
       op_ID: op_ID,
       RequestTimestamp: currentTimestamp,
       PeriodFrom: date_from,
@@ -64,7 +72,7 @@ async function ChargesBy(req, res) {
     conn.end();
 
   } catch (err) {
-    response(res, 500, {message: 'Internal server error', error: String(err)}, format);
+    response.general(res, 500, {message: 'Internal server error', error: String(err)}, format);
     conn.end();
   }
 }

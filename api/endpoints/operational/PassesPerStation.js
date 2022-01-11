@@ -4,7 +4,7 @@ const mysql = require("mysql");
 const util = require("util");
 const moment = require('moment');
 
-const response = require("../../utilities/FormattedResponse.js");
+const response = require("../../utilities/responseFunctions.js");
 const { conString } = require("../../utilities/definitions.js");
 
 async function PassesPerStation(req, res) {
@@ -23,11 +23,12 @@ async function PassesPerStation(req, res) {
   //Pass List query
   const passesListQuery = `
   SELECT p.passID as PassID, p.DateAndTime as PassTimeStamp,
-  v.vehicleID as VehicleID, v.tagProvider as TagProvider,
+  v.vehicleID as VehicleID, v.ProviderAbbr as TagProvider,
   CASE
     WHEN v.tagProvider = ?
     THEN 'home' ELSE 'visitor'
-  END as PassType
+  END as PassType,
+  p.charge as PassCharge
   FROM Passes p JOIN Vehicle v ON (p.VehiclevehicleID = v.vehicleID)
   WHERE p.StationstationID = ? AND p.DateAndTime BETWEEN ? AND ?
   ORDER BY p.DateAndTime ASC`;
@@ -41,7 +42,7 @@ async function PassesPerStation(req, res) {
     const stationOperatorRes = await query(stationOperatorQuery, [stationID]);
     //if no result given send error message
     if (!stationOperatorRes[0]) {
-      response(res, 400, {message: "Invalid stationID given"}, format);
+      response.general(res, 400, {message: "Invalid stationID given"}, format);
     }
     //store result in staionOperator
     const stationOperator = stationOperatorRes[0].StationOperator;
@@ -55,9 +56,19 @@ async function PassesPerStation(req, res) {
     ]);
     //if no result given send error message
     if (!passesListRes[0]) {
-      response(res, 402, {message: "No available data for specified stationID"
-      +"and time period."});
+      response.general(res, 402, {
+      Station: stationID,
+      StationOperator: stationOperator,
+      RequestTimestamp:currentTimestamp,
+      PeriodFrom: date_from,
+      PeriodTo: date_to,
+      NumberOfPasses: 0,
+      message: "No available data for specified stationID and time period."
+      }, format);
+     conn.end();
+     return 0;
     }
+
     //Parse result as JS Object and compute total length
     let passesList = JSON.parse(JSON.stringify(passesListRes));
     let i = 0;
@@ -66,7 +77,7 @@ async function PassesPerStation(req, res) {
     });
 
     //send final response
-    response(res, 200, {
+    response.PassesPerStation(res, 200, {
       Station: stationID,
       StationOperator: stationOperator,
       RequestTimestamp:currentTimestamp,
@@ -79,10 +90,9 @@ async function PassesPerStation(req, res) {
     conn.end();
 
   } catch (err) {
-    response(res, 500, {message: 'Internal server error', error: String(err)}, format);
+    response.general(res, 500, {message: 'Internal server error', error: String(err)}, format);
     conn.end();
   }
-
 }
 
 router.get(
