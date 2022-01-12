@@ -1,0 +1,326 @@
+{
+	"info": {
+		"_postman_id": "5e075dc7-043d-4d2d-ba0b-29d622087823",
+		"name": "operational",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "PassesCost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema1 = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"op1_ID\": { \"type\": \"string\" },",
+							"        \"op2_ID\": { \"type\": \"string\" },",
+							"        \"RequestTimestamp\": { \"type\": \"string\" },",
+							"        \"PeriodFrom\": { \"type\": \"string\" },",
+							"        \"PeriodTo\": { \"type\": \"string\" },",
+							"        \"NumberOfPasses\": { \"type\": \"integer\" },",
+							"        \"PassesCost\": { \"type\": \"float\" },",
+							"        \"message\" : { \"type\" : \"string\" }",
+							"    },",
+							"    \"required\": [\"op1_ID\", \"op2_ID\", \"RequestTimestamp\", \"PeriodFrom\", \"PeriodTo\", \"NumberOfPasses\", \"PassesCost\"]",
+							"};",
+							"",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"pm.test(\"Schema is valid\", () => {",
+							"    pm.response.to.have.jsonSchema(schema1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/PassesCost/:op1_ID/:op2_ID/:date_from/:date_to?format=json",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"PassesCost",
+						":op1_ID",
+						":op2_ID",
+						":date_from",
+						":date_to"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json"
+						}
+					],
+					"variable": [
+						{
+							"key": "op1_ID",
+							"value": "aodos"
+						},
+						{
+							"key": "op2_ID",
+							"value": "kentriki_odos"
+						},
+						{
+							"key": "date_from",
+							"value": "2020-01-01 00:00:00"
+						},
+						{
+							"key": "date_to",
+							"value": "2021-01-01 00:00:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PassesAnalysis",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema1 = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"op1_ID\": { \"type\": \"string\" },",
+							"        \"op2_ID\": { \"type\": \"string\" },",
+							"        \"RequestTimestamp\": { \"type\": \"string\", \"pattern\": \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PeriodFrom\": { \"type\": \"string\", \"pattern\": \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PeriodTo\": { \"type\": \"string\", \"pattern\": \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"NumberOfPasses\": { \"type\": \"integer\" },",
+							"        \"PassesList\": {",
+							"            \"type\": \"array\",",
+							"            \"items\": {",
+							"                \"type\": \"object\",",
+							"                \"properties\": {",
+							"                    \"PassID\": { \"type\": \"string\" },",
+							"                    \"StationID\": { \"type\": \"string\", \"pattern\": \"^[A-Z]{2}[0-9]{2}$\" },",
+							"                    \"TimeStamp\": { \"type\": \"string\", \"pattern\": \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"                    \"VehicleID\": { \"type\": \"string\" },",
+							"                    \"Charge\": { \"type\": \"number\" },",
+							"                    \"PassIndex\": { \"type\": \"integer\" }",
+							"                },",
+							"                \"required\": [\"PassID\", \"StationID\", \"TimeStamp\", \"VehicleID\", \"Charge\", \"PassIndex\"]",
+							"            }",
+							"        },",
+							"        \"message\": { \"type\": \"string\" }",
+							"    },",
+							"    \"required\": [\"op1_ID\", \"op2_ID\", \"RequestTimestamp\", \"PeriodFrom\", \"PeriodTo\", \"NumberOfPasses\"]",
+							"};",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"pm.test(\"Schema is valid\", () => {",
+							"    pm.response.to.have.jsonSchema(schema1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/PassesAnalysis/:op1_ID/:op2_ID/:date_from/:date_to?format=json",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"PassesAnalysis",
+						":op1_ID",
+						":op2_ID",
+						":date_from",
+						":date_to"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json"
+						}
+					],
+					"variable": [
+						{
+							"key": "op1_ID",
+							"value": "aodos"
+						},
+						{
+							"key": "op2_ID",
+							"value": "kentriki_odos"
+						},
+						{
+							"key": "date_from",
+							"value": "2021-01-20 00:00:00"
+						},
+						{
+							"key": "date_to",
+							"value": "2021-02-09 00:00:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ChargesBy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const schema1 = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"op_ID\": { \"type\": \"string\" },",
+							"        \"RequestTimestamp\": { \"type\": \"string\" },",
+							"        \"PeriodFrom\": { \"type\": \"string\" },",
+							"        \"PeriodTo\": { \"type\": \"string\" },",
+							"        \"PPOList\": {",
+							"            \"type\": \"array\",",
+							"            \"items\": {",
+							"                \"type\": \"object\",",
+							"                \"properties\": {",
+							"                    \"VisitingOperator\": { \"type\": \"string\" },",
+							"                    \"NumberOfPasses\": { \"type\": \"integer\" },",
+							"                    \"VisitingCost\": { \"type\": \"integer\" }",
+							"                }",
+							"            },",
+							"            \"message\": { \"type\": \"string\" },",
+							"            \"required\": [\"VisitingOperator\", \"NumberOfPasses\", \"VisitingCost\"]",
+							"        }",
+							"    },",
+							"    \"required\": [\"op_ID\", \"RequestTimestamp\", \"PeriodFrom\", \"PeriodTo\"]",
+							"};",
+							"",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"pm.test(\"Schema is valid\", () => {",
+							"    pm.response.to.have.jsonSchema(schema1);",
+							"});",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/ChargesBy/:op_ID/:date_from/:date_to",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"ChargesBy",
+						":op_ID",
+						":date_from",
+						":date_to"
+					],
+					"variable": [
+						{
+							"key": "op_ID",
+							"value": "aodos"
+						},
+						{
+							"key": "date_from",
+							"value": "2020-10-01 00:00:00"
+						},
+						{
+							"key": "date_to",
+							"value": "2020-10-31 00:00:00"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PassesPerStation",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/PassesPerStation/:station_ID/:date_from/:date_to?format=json",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"PassesPerStation",
+						":station_ID",
+						":date_from",
+						":date_to"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json"
+						}
+					],
+					"variable": [
+						{
+							"key": "station_ID",
+							"value": "AO00"
+						},
+						{
+							"key": "date_from",
+							"value": "2020-12-10 00:00:00"
+						},
+						{
+							"key": "date_to",
+							"value": "2021-01-01 00:00:00"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "variable_key",
+			"value": ""
+		}
+	]
+}
