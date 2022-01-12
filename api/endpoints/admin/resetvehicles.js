@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("mysql");
 
-const response = require("../../utilities/FormattedResponse.js");
+const response = require("../../utilities/responseFunctions.js");
 const { conString } = require("../../utilities/definitions.js");
 
 function resetvehicles(req, res) {
-  
+
   const con = mysql.createConnection(conString);
 
   const format = req.query.format;
@@ -16,23 +16,22 @@ function resetvehicles(req, res) {
   con.query(delete_query, (err, result) => {
     if (err) {
       const data = { "status": "failed", "message": err };
-      response(res, 500, data, format);
+      response.general(res, 500, data, format);
     }
-
     else {
-
       con.query(insert_query, (err, result) => {
         if (err) {
           const data = { "status": "failed", "message": err };
-          response(res, 500, data, format);
+          response.general(res, 500, data, format);
         }
         else {
           const data = { "status": "OK" };
-          response(res, 200, data, format);
+          response.general(res, 200, data, format);
         }
-      })
+      });
     }
-  })
+    con.end();
+  });
 }
 
 router.post("/admin/resetvehicles", resetvehicles);

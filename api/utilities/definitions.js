@@ -1,7 +1,7 @@
 let conString = {
   host:"localhost",
   user:"root",
-  password:"softeng17",
+  password:"",
   database:"db_tolls"
 };
 
