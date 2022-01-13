@@ -3,16 +3,30 @@ const app = express();
 const port = 9103;
 const host = "localhost";
 
-/* HTTP status codes */
-const SUCCESS = 200;
-const BAD_REQUEST = 400;
-const NOT_AUTHORIZED = 401;
-const NO_DATA = 402;
-const INTERNAL_SERVER_ERROR = 500;
+const fs = require("fs");
+const https = require("https");
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}.`);
+/* This code makes the server work with https */
+
+/* START >>>>>> */
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
 });
+
+https
+    .createServer(
+        {
+            key: fs.readFileSync("server.key"),
+            cert: fs.readFileSync("server.cert"),
+        },
+        app
+    )
+    .listen(port, function () {
+        console.log(`Example app listening on port ${port}`);
+    });
+/* <<<<<< END */
 
 const endpointsPath = "./endpoints";
 const adminEndpointsPath = `${endpointsPath}/admin`;
