@@ -1,4 +1,4 @@
-const protocol = "http";
+const protocol = "https";
 const host = "localhost";
 const port = 9103;
 
