@@ -16,6 +16,7 @@ create table Vehicle (
   licenseYear int(4) not null,
   tagID varchar(9) not null,
   tagProvider varchar(30) not null,
+  providerAbbr varchar(2) not null,
 
   primary key (vehicleID)
 );
@@ -39,7 +40,7 @@ create table Passes (
     on update cascade
 );
 
-#μετά το γέμισμα των υπόλοιπων πινάκων, που έγινε με το εργαλείο Wizard του MySQL Workbench
+#μετά το γέμισμα των υπόλοιπων πινάκων
 SET GLOBAL local_infile=1;
 LOAD DATA LOCAL INFILE
 '~/Desktop/passes.csv'
