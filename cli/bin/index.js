@@ -28,7 +28,7 @@ const argv = yargs.argv;
 const scope = argv._[0];
 
 const arguments = {
-    admin: [argv.source] /* make it so it works with admin/passesupd  instead of passesupd */,
+    admin: [argv.passesupd, argv.source] /* make it so it works with admin/passesupd  instead of passesupd */,
 
     healthcheck: [],
     resetpasses: [],

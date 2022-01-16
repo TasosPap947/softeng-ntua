@@ -15,4 +15,11 @@ const instance = axios.create({
     }),
 });
 
-module.exports = { baseURL, usage, instance };
+const conString = {
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "db_tolls",
+};
+
+module.exports = { baseURL, usage, instance, conString };
