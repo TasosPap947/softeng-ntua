@@ -53,15 +53,15 @@ async function insertPass(req, res) {
             ItemInserted: {
                 passID: passID,
                 DateAndTime: currentTimestamp,
+                charge: charge,
                 VehiclevehicleID: vehicleID,
                 StationstationID: stationID
-            },
-            DatabaseMessage: result
+            }
         }, format);
         conn.end();
     }
     catch (err) {
-        response.general(res, 500, { message: 'Internal server error', error: String(err) }, format);
+        response.general(res, 500, { status: failed, message: 'Internal server error', error: String(err) }, format);
         conn.end();
     }
 }
