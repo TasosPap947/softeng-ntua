@@ -11,10 +11,10 @@ const { host, port, baseURL } = require("../../utilities/definitions.js");
 
 async function calculateDebts(req, res) {
 
-    const { op_ID, date_from, date_to } = req.params;
+    const { date_from, date_to } = req.params;
     const format = req.query.format;
 
-    const dateFormat = 'YYY-MM-DD HH:mm:ss';
+    const dateFormat = 'YYYY-MM-DD HH:mm:ss';
     const currentTimestamp = moment().format(dateFormat);
 
     const OperatorQuery = `
@@ -43,34 +43,41 @@ async function calculateDebts(req, res) {
 
         var DebtList = [];
 
-        for (var i = 0; i < OperatorRes.length; i++) {
-            const BeneficiaryOperator = OperatorRes[i].operatorID;
-            if (BeneficiaryOperator == op_ID) continue;
-            const expense = await query(PassesCostQuery, [
-                op_ID,
-                BeneficiaryOperator,
-                date_from,
-                date_to
-            ]);
-            const income = await query(PassesCostQuery, [
-                BeneficiaryOperator,
-                op_ID,
-                date_from,
-                date_to
-            ]);
-            var debt = (expense[0].PassesCost - income[0].PassesCost);
-            if (debt < 0) debt = 0;
-            const item = {
-                BeneficiaryOperator: BeneficiaryOperator,
-                Income: income[0].PassesCost,
-                Expense : expense[0].PassesCost, 
-                Debt: debt
-                };
+        const numberOfOperators = OperatorRes.length;
 
-            DebtList.push(item);
+        for (var i = 0; i < numberOfOperators; i++) {
+
+            const op_ID = OperatorRes[i].operatorID;
+
+            for (var j = 0; j < numberOfOperators; j++) {
+
+                const BeneficiaryOperator = OperatorRes[j].operatorID;
+
+                if (BeneficiaryOperator == op_ID) continue;
+
+                const expense = await query(PassesCostQuery, [
+                    op_ID,
+                    BeneficiaryOperator,
+                    date_from,
+                    date_to
+                ]);
+                const income = await query(PassesCostQuery, [
+                    BeneficiaryOperator,
+                    op_ID,
+                    date_from,
+                    date_to
+                ]);
+                var debt = (expense[0].PassesCost - income[0].PassesCost);
+                if (debt < 0) debt = 0;
+                const item = {
+                    OwedFrom: op_ID,
+                    OwedTo: BeneficiaryOperator,
+                    Amount: debt
+                };
+                DebtList.push(item);
+            }
         }
         response.general(res, 200, {
-            op_ID : op_ID,
             RequestTimestamp: currentTimestamp,
             PeriodFrom: date_from,
             PeriodTo: date_to,
@@ -82,5 +89,5 @@ async function calculateDebts(req, res) {
         conn.end();
     }
 }
-router.get("/calculateDebts/:op_ID/:date_from/:date_to", calculateDebts);
+router.get("/calculateDebts/:date_from/:date_to", calculateDebts);
 module.exports = router;
