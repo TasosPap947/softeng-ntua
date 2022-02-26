@@ -13,9 +13,10 @@ create table Station (
 
 create table Vehicle (
   vehicleID varchar(12) not null,
-  licenseYear int(4) not null,
+  licenseYear int not null,
   tagID varchar(9) not null,
   tagProvider varchar(30) not null,
+  providerAbbr varchar(2) not null,
 
   primary key (vehicleID)
 );
@@ -39,14 +40,36 @@ create table Passes (
     on update cascade
 );
 
-#μετά το γέμισμα των υπόλοιπων πινάκων, που έγινε με το εργαλείο Wizard του MySQL Workbench
 SET GLOBAL local_infile=1;
+#Station
 LOAD DATA LOCAL INFILE
-'~/Desktop/passes.csv'
+'~/Desktop/stations.csv'
+INTO TABLE Station
+FIELDS TERMINATED BY ';'
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(stationID, stationProvider, stationName);
+
+
+LOAD DATA LOCAL INFILE
+'~/Desktop/vehicles.csv'
+INTO TABLE Vehicle
+FIELDS TERMINATED BY ';'
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS
+(vehicleID, tagID, tagProvider, providerAbbr, licenseYear);
+
+
+#μετά το γέμισμα των υπόλοιπων πινάκων
+#SET GLOBAL local_infile=1;
+LOAD DATA LOCAL INFILE
+'~/Desktop/Passes.csv'
 INTO TABLE Passes
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
-(passID, StationstationID, VehiclevehicleID, @a, charge)
-SET DateAndTime = str_to_date(@a, '%c/%e/%Y %k:%i');
+(passID, @a, StationstationID, VehiclevehicleID, charge)
+SET DateAndTime = str_to_date(@a, '%e/%c/%Y %H:%i');
