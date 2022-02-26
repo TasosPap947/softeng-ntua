@@ -68,6 +68,7 @@ async function calculateDebts(req, res) {
                     date_to
                 ]);
                 var debt = (expense[0].PassesCost - income[0].PassesCost);
+                debt = Number(debt.toFixed(2));
                 if (debt < 0) debt = 0;
                 const item = {
                     OwedFrom: op_ID,
