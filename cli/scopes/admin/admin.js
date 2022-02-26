@@ -6,17 +6,18 @@ const response = require("../../responseFunctions.js");
 function adminFunction(passesupd, source) {
     const con = mysql.createConnection(env.conString);
 
+    console.log(source);
     const insertQuery = `
-            LOAD DATA LOCAL INFILE
-            '${source}'
-            INTO TABLE Passes
-            FIELDS TERMINATED BY ','
-            ENCLOSED BY '"'
-            LINES TERMINATED BY '\n'
-            IGNORE 1 ROWS
-            (passID, StationstationID, VehiclevehicleID, @a, charge)
-            SET DateAndTime = str_to_date(@a, '%e/%c/%Y %k:%i');
-            `;
+    LOAD DATA INFILE
+    '${source}'
+    INTO TABLE Passes
+    FIELDS TERMINATED BY ';'
+    ENCLOSED BY '"'
+    LINES TERMINATED BY '\n'
+    IGNORE 1 ROWS
+    (passID, @a, StationstationID, VehiclevehicleID, charge)
+    SET DateAndTime = str_to_date(@a, '%e/%c/%Y %H:%i');            
+    `;
 
     con.query(insertQuery, (err, result) => {
         if (err) {

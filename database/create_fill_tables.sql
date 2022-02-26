@@ -41,9 +41,8 @@ create table Passes (
 );
 
 SET GLOBAL local_infile=1;
-#Station
 LOAD DATA LOCAL INFILE
-'~/Desktop/stations.csv'
+'stations.csv'
 INTO TABLE Station
 FIELDS TERMINATED BY ';'
 ENCLOSED BY '"'
@@ -51,9 +50,8 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (stationID, stationProvider, stationName);
 
-
 LOAD DATA LOCAL INFILE
-'~/Desktop/vehicles.csv'
+'vehicles.csv'
 INTO TABLE Vehicle
 FIELDS TERMINATED BY ';'
 ENCLOSED BY '"'
@@ -61,11 +59,8 @@ LINES TERMINATED BY '\n'
 IGNORE 1 ROWS
 (vehicleID, tagID, tagProvider, providerAbbr, licenseYear);
 
-
-#μετά το γέμισμα των υπόλοιπων πινάκων
-#SET GLOBAL local_infile=1;
 LOAD DATA LOCAL INFILE
-'~/Desktop/Passes.csv'
+'passes.csv'
 INTO TABLE Passes
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
