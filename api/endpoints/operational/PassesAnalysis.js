@@ -27,7 +27,7 @@ async function PassesAnalysis(req, res) {
     Passes p JOIN Vehicle v ON (p.VehiclevehicleID = v.vehicleID AND
     ? = v.ProviderAbbr)
   WHERE
-		? = (SELECT SUBSTRING(s.stationProvider,1,2) FROM Station s WHERE p.StationstationID = s.stationID) AND
+		? = (SELECT SUBSTRING(s.stationID,1,2) FROM Station s WHERE p.StationstationID = s.stationID) AND
         DateAndTime BETWEEN ? AND ?
         ORDER BY p.DateAndTime ASC`;
 

@@ -25,7 +25,7 @@ async function ChargesBy(req, res) {
     Passes p JOIN Vehicle v ON (p.VehiclevehicleID = v.vehicleID)
   WHERE
     v.ProviderAbbr != ? AND
-		? = (SELECT SUBSTRING(s.stationProvider,1,2) FROM Station s WHERE p.StationstationID = s.stationID) AND
+		? = (SELECT SUBSTRING(s.stationID,1,2) FROM Station s WHERE p.StationstationID = s.stationID) AND
         DateAndTime BETWEEN ? AND ?
         GROUP BY v.ProviderAbbr
         ORDER BY v.ProviderAbbr
@@ -42,19 +42,19 @@ async function ChargesBy(req, res) {
       op_ID,
       date_from,
       date_to
-    ]);  
+    ]);
 
     //if no result given send error message
-    if (!PPOListRes[0]) { 
+    if (!PPOListRes[0]) {
       response.general(res, 402, {
-      op_ID: op_ID,
-      RequestTimestamp: currentTimestamp,
-      PeriodFrom: date_from,
-      PeriodTo: date_to,
-      message: "No available data for specified provider and time period."
-    }, format);
-    conn.end();
-    return 0;
+        op_ID: op_ID,
+        RequestTimestamp: currentTimestamp,
+        PeriodFrom: date_from,
+        PeriodTo: date_to,
+        message: "No available data for specified provider and time period."
+      }, format);
+      conn.end();
+      return 0;
     }
 
     //Parse result as JS Object and compute total length
@@ -72,7 +72,7 @@ async function ChargesBy(req, res) {
     conn.end();
 
   } catch (err) {
-    response.general(res, 500, {message: 'Internal server error', error: String(err)}, format);
+    response.general(res, 500, { message: 'Internal server error', error: String(err) }, format);
     conn.end();
   }
 }

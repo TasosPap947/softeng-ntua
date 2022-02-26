@@ -50,8 +50,14 @@ const ChargesBy = require(`${operationalEndpointsPath}/ChargesBy.js`);
 const PassesAnalysis = require(`${operationalEndpointsPath}/PassesAnalysis.js`);
 const PassesCost = require(`${operationalEndpointsPath}/PassesCost.js`);
 const PassesPerStation = require(`${operationalEndpointsPath}/PassesPerStation.js`);
+const calculateDebts = require(`${operationalEndpointsPath}/calculateDebts.js`);
+const insertPass = require(`${operationalEndpointsPath}/insertPass.js`);
+const operatorList = require(`${operationalEndpointsPath}/operatorList.js`);
 
 app.use(baseURL, ChargesBy);
 app.use(baseURL, PassesAnalysis);
 app.use(baseURL, PassesCost);
 app.use(baseURL, PassesPerStation);
+app.use(baseURL, calculateDebts);
+app.use(baseURL, insertPass);
+app.use(baseURL, operatorList);
