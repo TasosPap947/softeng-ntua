@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("mysql");
 const util = require("util");
-const moment = require('moment');
+const moment = require("moment");
 
 const response = require("../../utilities/responseFunctions.js");
 const { conString } = require("../../utilities/definitions.js");
@@ -10,10 +10,9 @@ const { conString } = require("../../utilities/definitions.js");
 const { host, port, baseURL } = require("../../utilities/definitions.js");
 
 async function operatorList(req, res) {
-
     const format = req.query.format;
 
-    const dateFormat = 'YYYY-MM-DD HH:mm:ss';
+    const dateFormat = "YYYY-MM-DD HH:mm:ss";
     const currentTimestamp = moment().format(dateFormat);
 
     const OperatorQuery = `
@@ -29,17 +28,18 @@ async function operatorList(req, res) {
 
         const OperatorRes = await query(OperatorQuery);
 
-        response.general(res, 500, {
-            RequestTimestamp: currentTimestamp,
-            NumberOfOperators: OperatorRes.length,
-            operators: OperatorRes
-        }, format);
-
-
-        
-    }
-    catch (err) {
-        response.general(res, 500, { message: 'Internal server error', error: String(err) }, format);
+        response.general(
+            res,
+            200,
+            {
+                RequestTimestamp: currentTimestamp,
+                NumberOfOperators: OperatorRes.length,
+                operators: OperatorRes,
+            },
+            format
+        );
+    } catch (err) {
+        response.general(res, 500, { message: "Internal server error", error: String(err) }, format);
         conn.end();
     }
 }
