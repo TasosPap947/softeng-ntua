@@ -2,6 +2,7 @@
 	"info": {
 		"_postman_id": "6cee1210-b3df-4473-9538-927cd4b88f0d",
 		"name": "admin",
+		"description": "Admin operational endpoints",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -19,7 +20,6 @@
 							"        \"dbconnection\": { \"type\": \"object\" }",
 							"    },",
 							"    \"required\": [\"status\", \"dbconnection\"]",
-							"",
 							"};",
 							"",
 							"",
@@ -55,7 +55,8 @@
 							"value": "json"
 						}
 					]
-				}
+				},
+				"description": "Returns connection to database status and the dbconnection string used"
 			},
 			"response": []
 		},
@@ -72,9 +73,8 @@
 							"        \"status\": { \"type\": \"string\" },",
 							"        \"message\": { \"type\": \"object\" }",
 							"    },",
-							"    \"required\": [\"status\", \"dbconnection\"]",
+							"    \"required\": [\"status\"]",
 							"};",
-							"",
 							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -108,7 +108,8 @@
 							"value": "json"
 						}
 					]
-				}
+				},
+				"description": "Deletes all the passes from the database"
 			},
 			"response": []
 		},
@@ -160,7 +161,8 @@
 							"value": "json"
 						}
 					]
-				}
+				},
+				"description": "Deletes all the stations from the database"
 			},
 			"response": []
 		},
@@ -171,11 +173,23 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"const schema1 = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"status\": { \"type\": \"string\" },",
+							"        \"message\": { \"type\": \"object\" }",
+							"    },",
+							"    \"required\": [\"status\"]",
+							"};",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
 							"pm.test(\"Response time is less than 200ms\", function () {",
 							"    pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});",
+							"pm.test(\"Schema is valid\", () => {",
+							"    pm.response.to.have.jsonSchema(schema1);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -200,7 +214,8 @@
 							"value": "json"
 						}
 					]
-				}
+				},
+				"description": "Deletes all the vehicles from the database and then inserts default values"
 			},
 			"response": []
 		}

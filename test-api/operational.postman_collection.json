@@ -2,11 +2,12 @@
 	"info": {
 		"_postman_id": "5e075dc7-043d-4d2d-ba0b-29d622087823",
 		"name": "operational",
+		"description": "Operational endpoints",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "PassesCost",
+			"name": "ChargesBy",
 			"event": [
 				{
 					"listen": "test",
@@ -15,16 +16,25 @@
 							"const schema1 = {",
 							"    \"type\": \"object\",",
 							"    \"properties\": {",
-							"        \"op1_ID\": { \"type\": \"string\" },",
-							"        \"op2_ID\": { \"type\": \"string\" },",
-							"        \"RequestTimestamp\": { \"type\": \"string\" },",
-							"        \"PeriodFrom\": { \"type\": \"string\" },",
-							"        \"PeriodTo\": { \"type\": \"string\" },",
-							"        \"NumberOfPasses\": { \"type\": \"integer\" },",
-							"        \"PassesCost\": { \"type\": \"float\" },",
-							"        \"message\" : { \"type\" : \"string\" }",
+							"        \"op_ID\": { \"type\": \"string\" },",
+							"        \"RequestTimestamp\": { \"type\": \"string\", \"pattern\" : \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PeriodFrom\": { \"type\": \"string\", \"pattern\" : \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PeriodTo\": { \"type\": \"string\", \"pattern\" : \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PPOList\": {",
+							"            \"type\": \"array\",",
+							"            \"items\": {",
+							"                \"type\": \"object\",",
+							"                \"properties\": {",
+							"                    \"VisitingOperator\": { \"type\": \"string\" },",
+							"                    \"NumberOfPasses\": { \"type\": \"integer\" },",
+							"                    \"VisitingCost\": { \"type\": \"integer\" }",
+							"                }",
+							"            },",
+							"            \"message\": { \"type\": \"string\" },",
+							"            \"required\": [\"VisitingOperator\", \"NumberOfPasses\", \"VisitingCost\"]",
+							"        }",
 							"    },",
-							"    \"required\": [\"op1_ID\", \"op2_ID\", \"RequestTimestamp\", \"PeriodFrom\", \"PeriodTo\", \"NumberOfPasses\", \"PassesCost\"]",
+							"    \"required\": [\"op_ID\", \"RequestTimestamp\", \"PeriodFrom\", \"PeriodTo\"]",
 							"};",
 							"",
 							"",
@@ -36,7 +46,45 @@
 							"});",
 							"pm.test(\"Schema is valid\", () => {",
 							"    pm.response.to.have.jsonSchema(schema1);",
-							"});"
+							"});",
+							"",
+							"",
+							"pm.test(\"Correct Data\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.PPOList).to.eql(",
+							"        [",
+							"        {",
+							"            \"VisitingOperator\": \"AO\",",
+							"            \"NumberOfPasses\": 2,",
+							"            \"PassesCost\": 26",
+							"        },",
+							"        {",
+							"            \"VisitingOperator\": \"KO\",",
+							"            \"NumberOfPasses\": 1,",
+							"            \"PassesCost\": 13",
+							"        },",
+							"        {",
+							"            \"VisitingOperator\": \"MR\",",
+							"            \"NumberOfPasses\": 2,",
+							"            \"PassesCost\": 26",
+							"        },",
+							"        {",
+							"            \"VisitingOperator\": \"NE\",",
+							"            \"NumberOfPasses\": 1,",
+							"            \"PassesCost\": 13",
+							"        },",
+							"        {",
+							"            \"VisitingOperator\": \"OO\",",
+							"            \"NumberOfPasses\": 2,",
+							"            \"PassesCost\": 26",
+							"        }",
+							"    ]",
+							"    );",
+							"});",
+							"",
+							"",
+							"",
+							""
 						],
 						"type": "text/javascript"
 					}
@@ -46,14 +94,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseURL}}/PassesCost/:op1_ID/:op2_ID/:date_from/:date_to?format=json",
+					"raw": "{{baseURL}}/ChargesBy/:op_ID/:date_from/:date_to?format=json",
 					"host": [
 						"{{baseURL}}"
 					],
 					"path": [
-						"PassesCost",
-						":op1_ID",
-						":op2_ID",
+						"ChargesBy",
+						":op_ID",
 						":date_from",
 						":date_to"
 					],
@@ -65,23 +112,20 @@
 					],
 					"variable": [
 						{
-							"key": "op1_ID",
-							"value": "aodos"
-						},
-						{
-							"key": "op2_ID",
-							"value": "kentriki_odos"
+							"key": "op_ID",
+							"value": "GF"
 						},
 						{
 							"key": "date_from",
-							"value": "2020-01-01 00:00:00"
+							"value": "2019-01-01 00:00:00"
 						},
 						{
 							"key": "date_to",
-							"value": "2021-01-01 00:00:00"
+							"value": "2019-06-30 00:00:00"
 						}
 					]
-				}
+				},
+				"description": "For the selected op_ID (operator ID) gives a list of total passes and total cost for each visiting operator."
 			},
 			"response": []
 		},
@@ -129,6 +173,11 @@
 							"});",
 							"pm.test(\"Schema is valid\", () => {",
 							"    pm.response.to.have.jsonSchema(schema1);",
+							"});",
+							"",
+							"pm.test(\"Correct Number of passes\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.NumberOfPasses).to.eql(103);",
 							"});"
 						],
 						"type": "text/javascript"
@@ -159,27 +208,28 @@
 					"variable": [
 						{
 							"key": "op1_ID",
-							"value": "aodos"
+							"value": "AO"
 						},
 						{
 							"key": "op2_ID",
-							"value": "kentriki_odos"
+							"value": "GF"
 						},
 						{
 							"key": "date_from",
-							"value": "2021-01-20 00:00:00"
+							"value": "2020-01-01 00:00:00"
 						},
 						{
 							"key": "date_to",
-							"value": "2021-02-09 00:00:00"
+							"value": "2020-10-31 00:00:00"
 						}
 					]
-				}
+				},
+				"description": "Gives information for each pass (PassID, StationID, Timestamp, VehicleID, Charge, PassIndex) which occurred from date_from to date_to in a station of op1 of a vehicle registered to op2 (visiting operator)."
 			},
 			"response": []
 		},
 		{
-			"name": "ChargesBy",
+			"name": "PassesCost",
 			"event": [
 				{
 					"listen": "test",
@@ -188,25 +238,16 @@
 							"const schema1 = {",
 							"    \"type\": \"object\",",
 							"    \"properties\": {",
-							"        \"op_ID\": { \"type\": \"string\" },",
-							"        \"RequestTimestamp\": { \"type\": \"string\" },",
-							"        \"PeriodFrom\": { \"type\": \"string\" },",
-							"        \"PeriodTo\": { \"type\": \"string\" },",
-							"        \"PPOList\": {",
-							"            \"type\": \"array\",",
-							"            \"items\": {",
-							"                \"type\": \"object\",",
-							"                \"properties\": {",
-							"                    \"VisitingOperator\": { \"type\": \"string\" },",
-							"                    \"NumberOfPasses\": { \"type\": \"integer\" },",
-							"                    \"VisitingCost\": { \"type\": \"integer\" }",
-							"                }",
-							"            },",
-							"            \"message\": { \"type\": \"string\" },",
-							"            \"required\": [\"VisitingOperator\", \"NumberOfPasses\", \"VisitingCost\"]",
-							"        }",
+							"        \"op1_ID\": { \"type\": \"string\" },",
+							"        \"op2_ID\": { \"type\": \"string\" },",
+							"        \"RequestTimestamp\": { \"type\": \"string\", \"pattern\" : \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PeriodFrom\": { \"type\": \"string\", \"pattern\" : \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PeriodTo\": { \"type\": \"string\", \"pattern\" : \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"NumberOfPasses\": { \"type\": \"integer\" },",
+							"        \"PassesCost\": { \"type\": \"number\" },",
+							"        \"message\" : { \"type\" : \"string\" }",
 							"    },",
-							"    \"required\": [\"op_ID\", \"RequestTimestamp\", \"PeriodFrom\", \"PeriodTo\"]",
+							"    \"required\": [\"op1_ID\", \"op2_ID\", \"RequestTimestamp\", \"PeriodFrom\", \"PeriodTo\", \"NumberOfPasses\", \"PassesCost\"]",
 							"};",
 							"",
 							"",
@@ -220,7 +261,15 @@
 							"    pm.response.to.have.jsonSchema(schema1);",
 							"});",
 							"",
+							"pm.test(\"Correct NumberOfPasses\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.NumberOfPasses).to.eql(102);",
+							"});",
 							"",
+							"pm.test(\"Correct PassesCost\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.PassesCost).to.eql(285.6);",
+							"});",
 							""
 						],
 						"type": "text/javascript"
@@ -231,31 +280,43 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseURL}}/ChargesBy/:op_ID/:date_from/:date_to",
+					"raw": "{{baseURL}}/PassesCost/:op1_ID/:op2_ID/:date_from/:date_to?format=json",
 					"host": [
 						"{{baseURL}}"
 					],
 					"path": [
-						"ChargesBy",
-						":op_ID",
+						"PassesCost",
+						":op1_ID",
+						":op2_ID",
 						":date_from",
 						":date_to"
 					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json"
+						}
+					],
 					"variable": [
 						{
-							"key": "op_ID",
-							"value": "aodos"
+							"key": "op1_ID",
+							"value": "AO"
+						},
+						{
+							"key": "op2_ID",
+							"value": "EG"
 						},
 						{
 							"key": "date_from",
-							"value": "2020-10-01 00:00:00"
+							"value": "2020-01-01 00:00:00"
 						},
 						{
 							"key": "date_to",
-							"value": "2020-10-31 00:00:00"
+							"value": "2020-12-31 00:00:00"
 						}
 					]
-				}
+				},
+				"description": "Gives total number (NumberOfPasses) and cost (PassesCost) of passes which occurred from date_from to date_to in stations of op1 of a vehicles registered to op2 (visiting operator)."
 			},
 			"response": []
 		},
@@ -266,13 +327,95 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"const schema1 = {",
+							"    \"type\": \"object\",",
+							"    \"properties\": {",
+							"        \"Station\": { \"type\": \"string\" },",
+							"        \"StationOperator\": { \"type\": \"string\" },",
+							"        \"RequestTimestamp\": { \"type\": \"string\", \"pattern\": \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PeriodFrom\": { \"type\": \"string\", \"pattern\": \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"PeriodTo\": { \"type\": \"string\", \"pattern\": \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"        \"NumberOfPasses\": { \"type\": \"integer\" },",
+							"        \"PassesList\": {",
+							"            \"type\": \"array\",",
+							"            \"items\": {",
+							"                \"type\": \"object\",",
+							"                \"properties\": {",
+							"                    \"PassID\": { \"type\": \"string\" },",
+							"                    \"PassTimeStamp\": { \"type\": \"string\", \"pattern\": \"^[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}$\" },",
+							"                    \"VehicleID\": { \"type\": \"string\" },",
+							"                    \"TagProvider\": { \"type\": \"string\" },",
+							"                    \"PassType\" : { \"type\" : \"string\" },",
+							"                    \"PassCharge\" : { \"type\" : \"number\" },",
+							"                    \"PassIndex\": { \"type\": \"integer\" }",
+							"                },",
+							"                \"required\": [\"PassID\", \"PassTimeStamp\", \"VehicleID\", \"TagProvider\", \"PassType\", \"PassCharge\" ,\"PassIndex\"]",
+							"            }",
+							"        },",
+							"        \"message\": { \"type\": \"string\" }",
+							"    },",
+							"    \"required\": [\"Station\", \"StationOperator\", \"RequestTimestamp\", \"PeriodFrom\", \"PeriodTo\", \"NumberOfPasses\"]",
+							"};",
+							"",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
 							"pm.test(\"Response time is less than 200ms\", function () {",
 							"    pm.expect(pm.response.responseTime).to.be.below(200);",
 							"});",
-							""
+							"pm.test(\"Schema is valid\", () => {",
+							"    pm.response.to.have.jsonSchema(schema1);",
+							"});",
+							"",
+							"pm.test(\"Correct NumberOfPasses\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.NumberOfPasses).to.eql(4);",
+							"});",
+							"",
+							"pm.test(\"Correct PassesList\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.PassesList).to.eql(",
+							"        [",
+							"        {",
+							"            \"PassID\": \"SSO5296143\",",
+							"            \"PassTimeStamp\": \"2020-10-08 17:43:00\",",
+							"            \"VehicleID\": \"MX39VOS38645\",",
+							"            \"TagProvider\": \"AO\",",
+							"            \"PassType\": \"home\",",
+							"            \"PassCharge\": 2.8,",
+							"            \"PassIndex\": 1",
+							"        },",
+							"        {",
+							"            \"PassID\": \"CAZ6747049\",",
+							"            \"PassTimeStamp\": \"2020-10-22 10:53:00\",",
+							"            \"VehicleID\": \"DP11ENT03275\",",
+							"            \"TagProvider\": \"AO\",",
+							"            \"PassType\": \"home\",",
+							"            \"PassCharge\": 3.1,",
+							"            \"PassIndex\": 2",
+							"        },",
+							"        {",
+							"            \"PassID\": \"OMC8071708\",",
+							"            \"PassTimeStamp\": \"2020-10-28 04:23:00\",",
+							"            \"VehicleID\": \"BM25PHF40639\",",
+							"            \"TagProvider\": \"AO\",",
+							"            \"PassType\": \"home\",",
+							"            \"PassCharge\": 13,",
+							"            \"PassIndex\": 3",
+							"        },",
+							"        {",
+							"            \"PassID\": \"WJS2457044\",",
+							"            \"PassTimeStamp\": \"2020-10-29 11:56:00\",",
+							"            \"VehicleID\": \"QW79CHL42244\",",
+							"            \"TagProvider\": \"KO\",",
+							"            \"PassType\": \"visitor\",",
+							"            \"PassCharge\": 2.8,",
+							"            \"PassIndex\": 4",
+							"        }",
+							"    ]",
+							"    );",
+							"});"
 						],
 						"type": "text/javascript"
 					}
@@ -301,18 +444,335 @@
 					"variable": [
 						{
 							"key": "station_ID",
-							"value": "AO00"
+							"value": "AO10"
 						},
 						{
 							"key": "date_from",
-							"value": "2020-12-10 00:00:00"
+							"value": "2020-10-01 00:00:00"
 						},
 						{
 							"key": "date_to",
-							"value": "2021-01-01 00:00:00"
+							"value": "2020-10-31 00:00:00"
 						}
 					]
+				},
+				"description": "For a specific station ID and time period (date_from to date_to) gives the operator of the station and a list of all the passes occurred. Specifically, each item of the list contains the following: \n-PassID,            \n-PassTimeStamp,\n-VehicleID,\n-TagProvider,\n-PassType: \"home\"/\"away\",\n-PassCharge,\n-PassIndex."
+			},
+			"response": []
+		},
+		{
+			"name": "operatorList",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/operatorList",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"operatorList"
+					]
+				},
+				"description": "Returns in a list all the operators registered in the system - (OperatorName and OperatorID)."
+			},
+			"response": []
+		},
+		{
+			"name": "calculateDebts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Correct Data in Debt List for month 2020-10\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.DebtList).to.eql(",
+							"        [",
+							"        {",
+							"            \"OwedFrom\": \"AO\",",
+							"            \"OwedTo\": \"EG\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"AO\",",
+							"            \"OwedTo\": \"GF\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"AO\",",
+							"            \"OwedTo\": \"KO\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"AO\",",
+							"            \"OwedTo\": \"MR\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"AO\",",
+							"            \"OwedTo\": \"NE\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"AO\",",
+							"            \"OwedTo\": \"OO\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"EG\",",
+							"            \"OwedTo\": \"AO\",",
+							"            \"Amount\": 8.9",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"EG\",",
+							"            \"OwedTo\": \"GF\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"EG\",",
+							"            \"OwedTo\": \"KO\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"EG\",",
+							"            \"OwedTo\": \"MR\",",
+							"            \"Amount\": 0.1",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"EG\",",
+							"            \"OwedTo\": \"NE\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"EG\",",
+							"            \"OwedTo\": \"OO\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"GF\",",
+							"            \"OwedTo\": \"AO\",",
+							"            \"Amount\": 3.8",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"GF\",",
+							"            \"OwedTo\": \"EG\",",
+							"            \"Amount\": 9.25",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"GF\",",
+							"            \"OwedTo\": \"KO\",",
+							"            \"Amount\": 7.1",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"GF\",",
+							"            \"OwedTo\": \"MR\",",
+							"            \"Amount\": 1.25",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"GF\",",
+							"            \"OwedTo\": \"NE\",",
+							"            \"Amount\": 9.3",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"GF\",",
+							"            \"OwedTo\": \"OO\",",
+							"            \"Amount\": 15",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"KO\",",
+							"            \"OwedTo\": \"AO\",",
+							"            \"Amount\": 20.2",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"KO\",",
+							"            \"OwedTo\": \"EG\",",
+							"            \"Amount\": 4.55",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"KO\",",
+							"            \"OwedTo\": \"GF\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"KO\",",
+							"            \"OwedTo\": \"MR\",",
+							"            \"Amount\": 9.7",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"KO\",",
+							"            \"OwedTo\": \"NE\",",
+							"            \"Amount\": 9.1",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"KO\",",
+							"            \"OwedTo\": \"OO\",",
+							"            \"Amount\": 4.95",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"MR\",",
+							"            \"OwedTo\": \"AO\",",
+							"            \"Amount\": 9.7",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"MR\",",
+							"            \"OwedTo\": \"EG\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"MR\",",
+							"            \"OwedTo\": \"GF\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"MR\",",
+							"            \"OwedTo\": \"KO\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"MR\",",
+							"            \"OwedTo\": \"NE\",",
+							"            \"Amount\": 23.25",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"MR\",",
+							"            \"OwedTo\": \"OO\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"NE\",",
+							"            \"OwedTo\": \"AO\",",
+							"            \"Amount\": 4.7",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"NE\",",
+							"            \"OwedTo\": \"EG\",",
+							"            \"Amount\": 5.6",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"NE\",",
+							"            \"OwedTo\": \"GF\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"NE\",",
+							"            \"OwedTo\": \"KO\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"NE\",",
+							"            \"OwedTo\": \"MR\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"NE\",",
+							"            \"OwedTo\": \"OO\",",
+							"            \"Amount\": 5.95",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"OO\",",
+							"            \"OwedTo\": \"AO\",",
+							"            \"Amount\": 34.4",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"OO\",",
+							"            \"OwedTo\": \"EG\",",
+							"            \"Amount\": 1.35",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"OO\",",
+							"            \"OwedTo\": \"GF\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"OO\",",
+							"            \"OwedTo\": \"KO\",",
+							"            \"Amount\": 0",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"OO\",",
+							"            \"OwedTo\": \"MR\",",
+							"            \"Amount\": 1.45",
+							"        },",
+							"        {",
+							"            \"OwedFrom\": \"OO\",",
+							"            \"OwedTo\": \"NE\",",
+							"            \"Amount\": 0",
+							"        }",
+							"    ]",
+							"    );",
+							"});"
+						],
+						"type": "text/javascript"
+					}
 				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/calculateDebts/:date_from/:date_to?format=json",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"calculateDebts",
+						":date_from",
+						":date_to"
+					],
+					"query": [
+						{
+							"key": "format",
+							"value": "json"
+						}
+					],
+					"variable": [
+						{
+							"key": "date_from",
+							"value": "2020-10-01 00:00:00"
+						},
+						{
+							"key": "date_to",
+							"value": "2020-11-01 00:00:00"
+						}
+					]
+				},
+				"description": "Calculate the debts for a specific time period between all the operators registered in the system."
+			},
+			"response": []
+		},
+		{
+			"name": "insertPass",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/insertPass/:charge/:vehicleID/:stationID",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"insertPass",
+						":charge",
+						":vehicleID",
+						":stationID"
+					],
+					"variable": [
+						{
+							"key": "charge",
+							"value": "3.2"
+						},
+						{
+							"key": "vehicleID",
+							"value": "AT19HLV57173"
+						},
+						{
+							"key": "stationID",
+							"value": "AO00"
+						}
+					]
+				},
+				"description": "Register a pass in the database in real time. \nGive the cost, vehicleID and stationID."
 			},
 			"response": []
 		}
