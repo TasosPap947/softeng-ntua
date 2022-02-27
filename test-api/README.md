@@ -1,6 +1,6 @@
-# test-api
+# test-api & api POSTMAN documentation
 
 Περιεχόμενα:
 
-- API tests
+- Postman exports 
 
