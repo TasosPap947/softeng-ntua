@@ -22,8 +22,9 @@ async function operatorList(req, res) {
     GROUP BY operatorName, operatorID
     ORDER BY operatorID;`;
 
+    let conn;
     try {
-        const conn = await mysql.createConnection(conString);
+        conn = await mysql.createConnection(conString);
         const query = util.promisify(conn.query).bind(conn);
 
         const OperatorRes = await query(OperatorQuery);
